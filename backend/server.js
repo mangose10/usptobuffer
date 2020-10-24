@@ -17,6 +17,14 @@ var labelRouter = require('./routes/label-response')
 
 const app = express();
 
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+const port = process.env.PORT || 3000;
+
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
@@ -27,7 +35,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({secret:"testing"}))
-//app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'build')));
 
 app.use('/api/get-pat-data', patRouter);
 app.use('/api/del-usr', dlUsrRouter);
@@ -54,5 +62,18 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send(err);
 });
+
+/*if (process.env.NODE_ENV === 'production') {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, '../build')));
+    
+  // Handle React routing, return all requests to React app
+  app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  });
+}*/
+
+
+app.listen(port, () => console.log(`Listening on port ${port}`));
 
 module.exports = app;
